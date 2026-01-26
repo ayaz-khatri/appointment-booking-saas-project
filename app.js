@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import session from "express-session";
 import flash from "connect-flash";
 import path from 'path';
-// import __dirname from './utils/dirname.js';
+import __dirname from './utils/dirname.js';
 // import authRoutes from './routes/auth.js';
 // import adminRoutes from './routes/admin.js';
 // import auth from "./middlewares/auth.js";
@@ -24,8 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(expressLayouts);
+app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
-app.use(auth);
+// app.use(auth);
 
 /* --------------------------- Database Connection -------------------------- */
 mongoose.connect(process.env.MONGODB_URI)
@@ -50,15 +51,16 @@ app.use((req, res, next) => {
 });
 
 /* -------------------------------- passport -------------------------------- */
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 /* --------------------------------- Routes --------------------------------- */
 
 
 
-app.use('/', () => {
-    console.log('Welcome to Appointment Booking SaaS Project');
+app.use('/', (req, res) => {
+    // res.send('Welcome to Appointment Booking SaaS Project');
+    res.render('public/home');
 });
 
 // app.use('', (req, res, next) => {

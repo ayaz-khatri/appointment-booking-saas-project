@@ -2,7 +2,7 @@
   "name": "appointment-booking-saas-project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -27,20 +27,20 @@
     "cookie-parser": "^1.4.7",
     "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
-    "ejs": "^3.1.10",
+    "ejs": "^4.0.1",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
-    "express-session": "^1.18.2",
+    "express-session": "^1.19.0",
     "express-validator": "^7.3.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.0.1",
+    "mongoose": "^9.1.5",
     "mongoose-paginate-v2": "^1.9.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.11",
+    "nodemailer": "^7.0.12",
     "nodemon": "^3.1.11",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "slugify": "^1.6.6",
-    "stripe": "^20.1.2"
+    "stripe": "^20.2.0"
   }
 }
