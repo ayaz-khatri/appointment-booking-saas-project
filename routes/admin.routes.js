@@ -1,19 +1,10 @@
 import express from 'express';
 const router = express.Router();
-
+import adminController from '../controllers/admin.controller.js';
 
 // router.use(isLoggedIn);
 // router.use(isAdmin);
 
-router.get('/', async (req, res, next) => {
-    try {
-        res.render('admin/dashboard');
-    } catch (error) {
-        next(errorMessage("Something went wrong", 500));
-    }
-});
-
-
-
+router.get('/', adminController.index);
 
 export default router;
