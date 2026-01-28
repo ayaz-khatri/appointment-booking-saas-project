@@ -5,9 +5,9 @@ import cookieParser from 'cookie-parser';
 import session from "express-session";
 import flash from "connect-flash";
 import path from 'path';
-import __dirname from './utils/dirname.js';
+import __dirname from './utils/dirname.util.js';
 // import authRoutes from './routes/auth.js';
-// import adminRoutes from './routes/admin.js';
+import adminRoutes from './routes/admin.routes.js';
 // import auth from "./middlewares/auth.js";
 import bodyParser from 'body-parser';
 import passport from 'passport';
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(expressLayouts);
-app.set('layout', './layouts/main');
+app.set('layout', './layouts/public.layout.ejs');
 app.set('view engine', 'ejs');
 // app.use(auth);
 
@@ -58,10 +58,21 @@ app.use((req, res, next) => {
 
 
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
     // res.send('Welcome to Appointment Booking SaaS Project');
     res.render('public/home');
 });
+
+app.use('/admin', (req, res, next)=>{
+  res.locals.layout = 'layouts/admin.layout.ejs';
+  next();
+});
+
+app.use('/admin', adminRoutes);
+// app.use('/vendor', vendorRoutes);
+// app.use('/profile', profileRoutes);
+// app.use('/', frontendRoutes);
+// app.use(authRoutes);
 
 // app.use('', (req, res, next) => {
 //     res.status(404).render('common/404',{
