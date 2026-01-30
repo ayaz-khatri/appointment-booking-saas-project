@@ -9,12 +9,11 @@ import __dirname from './utils/dirname.util.js';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import pagesRoutes from './routes/pages.routes.js';
-// import auth from "./middlewares/auth.js";
+// import auth from "./middlewares/auth.middleware.js";
 import bodyParser from 'body-parser';
 import passport from 'passport';
 // import './config/passport.js';
 import dotenv from 'dotenv';
-import { title } from 'process';
 dotenv.config();
 
 /* ------------------------- Initialize Express App ------------------------- */
