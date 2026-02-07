@@ -3,7 +3,7 @@ import User from '../models/user.model.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const auth = async (req, res, next) => {
+export const attachAuth = async (req, res, next) => {
      const token = req.cookies.token;
 
     if (token) {
@@ -25,6 +25,49 @@ const auth = async (req, res, next) => {
     }
 
     next();
-};  
+};
 
-export default auth;
+export const isAuthenticated = async (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            req.flash("error", "Unauthorized access. Please log in.");
+            return res.redirect("/login");
+        }
+        next();
+    } catch (error) {
+        req.flash("error", "Something went wrong. Please log in again.");
+        return res.redirect('/login');
+    }
+}; 
+
+export const isAdmin = (req, res, next) => {
+    console.log(req.user);
+    if (req.user && req.user.role === 'admin') {
+        return next();
+    }
+
+    return res.redirect('/login');
+};
+
+export const redirectIfLoggedIn = (req, res, next) => {
+    const token = req.cookies?.token;
+
+    if (!token) {
+        return next(); // Not logged in → allow access (login/register pages)
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const redirectMap = {
+            admin: "/admin",
+            vendor: "/vendor",
+            customer: "/"
+        };
+
+        return res.redirect(redirectMap[decoded.role] || "/");
+    } catch (err) {
+        return next(); // Invalid or expired token → treat as not logged in
+    }
+};

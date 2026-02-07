@@ -1,16 +1,17 @@
 import express from 'express';
 const router = express.Router();
 import authController from '../controllers/auth.controller.js';
-import redirectIfLoggedIn from '../middlewares/redirect-if-authenticated.middleware.js';
 import authValidation from '../validators/auth.validator.js';
 import validate from '../middlewares/validate.middleware.js';
+import { redirectIfLoggedIn } from "../middlewares/auth.middleware.js";
+
 
 router.use('/', (req, res, next)=>{
   res.locals.layout = 'layouts/auth.layout.ejs';
   next();
 });
 
-router.get('/login', authController.loginPage);
+router.get('/login', redirectIfLoggedIn, authController.loginPage);
 router.post('/login', redirectIfLoggedIn, authValidation.loginValidation, validate, authController.login);
 
 router.get('/register', authController.registerPage);
@@ -33,7 +34,7 @@ router.get('/reset-password', authController.resetPasswordPage);
 //     authController.googleCallback
 // );
 
-// router.get('/logout', authController.logout);
+router.get('/logout', authController.logout);
 
 // router.get('/verify-email/:token', authController.verifyEmail);
 

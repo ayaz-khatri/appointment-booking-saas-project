@@ -9,7 +9,7 @@ import __dirname from './utils/dirname.util.js';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import pagesRoutes from './routes/pages.routes.js';
-// import auth from "./middlewares/auth.middleware.js";
+import { attachAuth } from "./middlewares/auth.middleware.js";
 import bodyParser from 'body-parser';
 import passport from 'passport';
 // import './config/passport.js';
@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(expressLayouts);
 app.set('layout', './layouts/pages.layout.ejs');
 app.set('view engine', 'ejs');
-// app.use(auth);
+app.use(attachAuth);
 
 /* --------------------------- Database Connection -------------------------- */
 mongoose.connect(process.env.MONGODB_URI)

@@ -1,6 +1,4 @@
-import User from "../models/user.model.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { loginUserService } from '../services/auth.service.js';
 import errorMessage from "../utils/error-message.util.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -37,50 +35,56 @@ const resetPasswordPage = async (req, res, next) => {
     }
 };
 
+
 const login = async (req, res, next) => {
     const { email, password, rememberMe } = req.body;
     try {
-        const user = await User.findOne({ email, isDeleted: false }).select('+password');
-        if (!user) {
-            req.flash("error", "Invalid Email or Password.");
-            req.flash("old", req.body);
-            return res.redirect("/login");
+        const { user, token } = await loginUserService({
+            email,
+            password,
+            rememberMe
+        });
+
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: 'strict'
+        };
+
+        if (rememberMe) {
+            cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000;
         }
 
-        if (!user.isEmailVerified) {
+        res.cookie('token', token, cookieOptions);
+
+        req.flash('success', 'Login Successful.');
+
+        const redirectMap = {
+            admin: '/admin',
+            vendor: '/vendor',
+            customer: '/'
+        };
+
+        res.redirect(redirectMap[user.role] || '/');
+
+    } catch (error) {
+        if (error.message === 'INVALID_CREDENTIALS') {
+            req.flash('error', 'Invalid Email or Password.');
+            req.flash('old', req.body);
+            return res.redirect('/login');
+        }
+
+        if (error.message === 'EMAIL_NOT_VERIFIED') {
             req.flash('error', 'Please verify your email first.');
             return res.redirect('/login');
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            req.flash("error", "Invalid Email or Password.");
-            req.flash("old", req.body);
-            return res.redirect("/login");
-        }
-
-        const tokenExpiry = rememberMe ? '30d' : '1d';
-        const jwtData = { id: user._id, role: user.role };
-        const token = jwt.sign(jwtData, process.env.JWT_SECRET, { expiresIn: tokenExpiry });
-        const cookieOptions = { httpOnly: true, sameSite: 'strict' };
-        if (rememberMe) cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-        res.cookie('token', token, cookieOptions);
- 
-        req.flash("success", "Login Successful.");
-        user.lastLogin = new Date();
-        await user.save({ validateBeforeSave: false });
-
-        const redirectMap = {
-            admin: "/admin",
-            vendor: "/vendor",
-            customer: "/"
-        };
-
-        res.redirect(redirectMap[user.role] || "/");
-
-    } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
+};
+
+const logout = (req, res) => {
+    res.clearCookie('token', { httpOnly: true, sameSite: 'strict' });
+    res.redirect('/login');
 };
 
 export default {
@@ -88,5 +92,6 @@ export default {
     registerPage,
     forgotPasswordPage,
     resetPasswordPage,
-    login
+    login,
+    logout
 };
