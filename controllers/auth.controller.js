@@ -1,4 +1,4 @@
-import { loginUserService } from '../services/auth.service.js';
+import { loginUserService, registerUserService } from '../services/auth.service.js';
 import errorMessage from "../utils/error-message.util.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -39,23 +39,13 @@ const resetPasswordPage = async (req, res, next) => {
 const login = async (req, res, next) => {
     const { email, password, rememberMe } = req.body;
     try {
-        const { user, token } = await loginUserService({
-            email,
-            password,
-            rememberMe
-        });
-
-        const cookieOptions = {
-            httpOnly: true,
-            sameSite: 'strict'
-        };
-
+        const { user, token } = await loginUserService({ email, password, rememberMe });
+        const cookieOptions = { httpOnly: true, sameSite: 'strict'};
         if (rememberMe) {
             cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000;
         }
 
         res.cookie('token', token, cookieOptions);
-
         req.flash('success', 'Login Successful.');
 
         const redirectMap = {
@@ -82,6 +72,28 @@ const login = async (req, res, next) => {
     }
 };
 
+
+const register = async (req, res, next) => {
+    try {
+        await registerUserService(req.body);
+
+        req.flash(
+            'success',
+            'Registration successful. Please check your email to verify your account.'
+        );
+        res.redirect('/login');
+
+    } catch (error) {
+        if (error.message === 'EMAIL_EXISTS') {
+            req.flash('error', 'Email already exists.');
+            req.flash('old', req.body);
+            return res.redirect('/register');
+        }
+
+        next(error);
+    }
+};
+
 const logout = (req, res) => {
     res.clearCookie('token', { httpOnly: true, sameSite: 'strict' });
     res.redirect('/login');
@@ -93,5 +105,6 @@ export default {
     forgotPasswordPage,
     resetPasswordPage,
     login,
+    register,
     logout
 };

@@ -15,7 +15,7 @@ router.get('/login', redirectIfLoggedIn, authController.loginPage);
 router.post('/login', redirectIfLoggedIn, authValidation.loginValidation, validate, authController.login);
 
 router.get('/register', authController.registerPage);
-// router.post('/register', redirectIfLoggedIn, isValid.userValidation, authController.register);
+router.post('/register', redirectIfLoggedIn, authValidation.userValidation, validate, authController.register);
 
 router.get('/forgot-password', authController.forgotPasswordPage);
 // router.post('/forgot-password', redirectIfLoggedIn, isValid.forgotPasswordValidation, authController.forgotPassword);

@@ -1,6 +1,9 @@
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+// import sendEmail from '../utils/sendEmail.js';
+// import verificationEmailTemplate from '../emails/verificationEmailTemplate.js';
 
 export const loginUserService = async ({ email, password, rememberMe }) => {
     const user = await User
@@ -34,4 +37,45 @@ export const loginUserService = async ({ email, password, rememberMe }) => {
         user,
         token
     };
+};
+
+export const registerUserService = async ({ name, email, phone, password, role }) => {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        throw new Error('EMAIL_EXISTS');
+    }
+
+    const allowedRoles = ['customer'];
+    const finalRole = allowedRoles.includes(role) ? role : 'customer';
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        role: finalRole
+    });
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    user.emailVerificationToken = crypto
+        .createHash('sha256')
+        .update(verificationToken)
+        .digest('hex');
+
+    user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+    await user.save();
+
+    // const verificationUrl = `${process.env.APP_URL}/verify-email/${verificationToken}`;
+
+    // await sendEmail({
+    //     to: user.email,
+    //     subject: 'Verify your email address',
+    //     html: verificationEmailTemplate(user.name, verificationUrl)
+    // });
+
+    return user;
 };

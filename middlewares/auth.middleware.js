@@ -3,7 +3,7 @@ import User from '../models/user.model.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const attachAuth = async (req, res, next) => {
+export const attachAuthUser = async (req, res, next) => {
      const token = req.cookies.token;
 
     if (token) {

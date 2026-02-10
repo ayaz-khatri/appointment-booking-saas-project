@@ -43,10 +43,10 @@ const userValidation = [
         return true;
     }),
 
-    body('role')
-    .trim()
-    .notEmpty().withMessage('Role is required.')
-    .isIn(['customer', 'vendor']).withMessage('Role must be either Customer or Vendor.')
+    // body('role')
+    // .trim()
+    // .notEmpty().withMessage('Role is required.')
+    // .isIn(['customer']).withMessage('Role must be either Customer or Vendor.')
 ];
 
 const forgotPasswordValidation = [
