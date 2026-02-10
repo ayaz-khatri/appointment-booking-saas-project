@@ -36,7 +36,7 @@ router.get('/reset-password', authController.resetPasswordPage);
 
 router.get('/logout', authController.logout);
 
-// router.get('/verify-email/:token', authController.verifyEmail);
+router.get('/verify-email/:token', authController.verifyEmail);
 
 
 export default router;

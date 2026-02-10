@@ -1,4 +1,4 @@
-import { loginUserService, registerUserService } from '../services/auth.service.js';
+import { loginUserService, registerUserService, verifyEmailService } from '../services/auth.service.js';
 import errorMessage from "../utils/error-message.util.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -99,6 +99,27 @@ const logout = (req, res) => {
     res.redirect('/login');
 };
 
+const verifyEmail = async (req, res, next) => {
+    try {
+        await verifyEmailService(req.params.token);
+
+        req.flash('success', 'Email verified successfully.');
+        res.redirect('/login');
+
+    } catch (error) {
+        if (error.message === 'EMAIL_ALREADY_VERIFIED') {
+            req.flash('success', 'Email already verified.');
+            return res.redirect('/login');
+        }
+
+        if (error.message === 'INVALID_OR_EXPIRED_TOKEN') {
+            return next(errorMessage('Invalid or expired token', 400));
+        }
+
+        next(error);
+    }
+};
+
 export default {
     loginPage,
     registerPage,
@@ -106,5 +127,6 @@ export default {
     resetPasswordPage,
     login,
     register,
+    verifyEmail,
     logout
 };

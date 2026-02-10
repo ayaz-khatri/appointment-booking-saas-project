@@ -1,4 +1,4 @@
-import transporter from './mail.js';
+import transporter from './mail.util.js';
 import dotenv from "dotenv";
 dotenv.config();
 
