@@ -60,7 +60,18 @@ const resetPasswordValidation = [
     body('password')
     .trim()
     .notEmpty().withMessage('Password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.')
+    .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.'),
+
+    body('confirmPassword')
+    .trim()
+    .notEmpty().withMessage('Confirm password is required.')
+    .isLength({ min: 8, max: 20 }).withMessage('Confirm password must be at least 8 and at most 20 characters long.')
+    .custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Passwords do not match.');
+        }
+        return true;
+    }),
 ];
 
 export default {

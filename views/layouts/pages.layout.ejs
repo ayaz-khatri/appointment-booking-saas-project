@@ -1,164 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/output.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico" />
-  </head>
 
-  <body>
-    <!-- Navbar -->
-    <nav
-      id="navbar"
-      class="flex items-center justify-between fixed z-50 top-0 w-full px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-slate-200 bg-white/40 backdrop-blur"
-    >
-      <a href="/">
-        <img
-          class="h-9 md:h-9.5 w-auto shrink-0"
-          src="/assets/images/logo-full.png"
-          alt="Logo"
-          width="140"
-          height="40"
-        />
-      </a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/output.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico" />
+</head>
 
-      <div class="hidden items-center md:gap-8 lg:gap-12 md:flex lg:pl-20">
-        <a href="/" class="hover:text-indigo-600">Home</a>
-        <a href="#!" class="hover:text-indigo-600">Features</a>
-        <a href="#!" class="hover:text-indigo-600">Pricing</a>
-        <a href="#!" class="hover:text-indigo-600">Docs</a>
-      </div>
+<body>
+  <!-- Navbar -->
+  <nav id="navbar"
+    class="flex items-center justify-between fixed z-50 top-0 w-full px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-slate-200 bg-white/40 backdrop-blur">
+    <a href="/">
+      <img class="h-9 md:h-9.5 w-auto shrink-0" src="/assets/images/logo-full.png" alt="Logo" width="140" height="40" />
+    </a>
 
-      <div
-        id="mobileMenu"
-        class="fixed inset-0 flex flex-col items-center justify-center gap-6 text-lg font-medium bg-white/40 backdrop-blur-md md:hidden transition duration-300 -translate-x-full"
-      >
-        <a href="/">Home</a>
-        <a href="#!">Features</a>
-        <a href="#!">Pricing</a>
-        <a href="#!">Docs</a>
-        <a href="/login">Login</a>
-        <button
-          id="closeMenu"
-          class="aspect-square size-10 p-1 items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md flex"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-x-icon lucide-x"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </button>
-      </div>
+    <div class="hidden items-center md:gap-8 lg:gap-12 md:flex lg:pl-20">
+      <a href="/" class="hover:text-indigo-600">Home</a>
+      <a href="#!" class="hover:text-indigo-600">Features</a>
+      <a href="#!" class="hover:text-indigo-600">Pricing</a>
+      <a href="#!" class="hover:text-indigo-600">Docs</a>
+    </div>
 
-      <div class="flex items-center gap-4 md:gap-6">
+    <div id="mobileMenu"
+      class="fixed inset-0 flex flex-col items-center justify-center gap-6 text-lg font-medium bg-white/40 backdrop-blur-md md:hidden transition duration-300 -translate-x-full">
+      <a href="/">Home</a>
+      <a href="#!">Features</a>
+      <a href="#!">Pricing</a>
+      <a href="#!">Docs</a>
+      <% if(authUser) { %>
+        <a href="/logout"></a>
+        <% } else { %>
+
+      <a href="/login">Login</a>
+      <% } %>
+      <button id="closeMenu"
+        class="aspect-square size-10 p-1 items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md flex">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-x-icon lucide-x">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-4 md:gap-6">
+      <% if(authUser) { %>
+        <a href="/logout" class="hidden md:block hover:bg-slate-100 transition px-4 py-2 border border-indigo-600 rounded-md">Logout</a>
+      <% } else { %>
         <a href="/login"
-          class="hidden md:block hover:bg-slate-100 transition px-4 py-2 border border-indigo-600 rounded-md"
-        >
+          class="hidden md:block hover:bg-slate-100 transition px-4 py-2 border border-indigo-600 rounded-md">
           Login
         </a>
-        <button
-          class="hidden md:block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md"
-        >
-          Get started
-        </button>
-        <button id="openMenu" class="md:hidden">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-menu-icon lucide-menu"
-          >
-            <path d="M4 12h16" />
-            <path d="M4 18h16" />
-            <path d="M4 6h16" />
-          </svg>
-        </button>
-      </div>
-    </nav>
-    <%- include('../partials/flash-messages') %>
+      <% } %>
+      <button id="openMenu" class="md:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-menu-icon lucide-menu">
+          <path d="M4 12h16" />
+          <path d="M4 18h16" />
+          <path d="M4 6h16" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <%- include('../partials/flash-messages') %>
     <%- body %>
 
-    <footer
-      class="relative px-6 md:px-16 lg:px-24 xl:px-32 mt-40 w-full text-slate-500"
-    >
-      <div
-        class="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-200 pb-6"
-      >
-        <div class="md:max-w-114">
-          <img
-            id="logo-footer"
-            class="w-auto shrink-0"
-            src="/assets/images/logo-full.png"
-            alt="Logo"
-            width="{140}"
-            height="{40}"
-            priority
-            fetchPriority="high"
-          />
-          <p class="mt-6">
-            Launch your SaaS product in record time with our all-in-one platform
-            designed for speed, flexibility and growth. Whether you`&apos;re a
-            solo founder or a fast-moving team, we provide everything you need.
-          </p>
-        </div>
-        <div class="flex-1 flex items-start md:justify-end gap-20">
-          <div>
-            <h2 class="font-semibold mb-5">Company</h2>
-            <ul class="space-y-2">
-              <li>
-                <a href="/" class="hover:text-indigo-600 transition">Home</a>
-              </li>
-              <li>
-                <a href="/features" class="hover:text-indigo-600 transition"
-                  >Features</a
-                >
-              </li>
-              <li>
-                <a href="/pricing" class="hover:text-indigo-600 transition"
-                  >Pricing</a
-                >
-              </li>
-              <li>
-                <a href="/docs" class="hover:text-indigo-600 transition"
-                  >Docs</a
-                >
-              </li>
-            </ul>
+      <footer class="relative px-6 md:px-16 lg:px-24 xl:px-32 mt-40 w-full text-slate-500">
+        <div class="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-200 pb-6">
+          <div class="md:max-w-114">
+            <img id="logo-footer" class="w-auto shrink-0" src="/assets/images/logo-full.png" alt="Logo" width="{140}"
+              height="{40}" priority fetchPriority="high" />
+            <p class="mt-6">
+              Launch your SaaS product in record time with our all-in-one platform
+              designed for speed, flexibility and growth. Whether you`&apos;re a
+              solo founder or a fast-moving team, we provide everything you need.
+            </p>
           </div>
-          <div>
-            <h2 class="font-semibold mb-5">Get in touch</h2>
-            <div class="space-y-2">
-              <p>+1-212-456-7890</p>
-              <p>contact@example.com</p>
+          <div class="flex-1 flex items-start md:justify-end gap-20">
+            <div>
+              <h2 class="font-semibold mb-5">Company</h2>
+              <ul class="space-y-2">
+                <li>
+                  <a href="/" class="hover:text-indigo-600 transition">Home</a>
+                </li>
+                <li>
+                  <a href="/features" class="hover:text-indigo-600 transition">Features</a>
+                </li>
+                <li>
+                  <a href="/pricing" class="hover:text-indigo-600 transition">Pricing</a>
+                </li>
+                <li>
+                  <a href="/docs" class="hover:text-indigo-600 transition">Docs</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="font-semibold mb-5">Get in touch</h2>
+              <div class="space-y-2">
+                <p>+1-212-456-7890</p>
+                <p>contact@example.com</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <p class="pt-4 text-center pb-5">
-        Copyright 2024 ©
-        All Right Reserved. Powered by
-        <a href="https://github.com/ayaz-khatri" target="_blank">Ayaz Khatri</a>
-      </p>
-    </footer>
+        <p class="pt-4 text-center pb-5">
+          Copyright 2024 ©
+          All Right Reserved. Powered by
+          <a href="https://github.com/ayaz-khatri" target="_blank">Ayaz Khatri</a>
+        </p>
+      </footer>
 
-    <script src="/js/script.js"></script>
-  </body>
+      <script src="/js/script.js"></script>
+</body>
+
 </html>

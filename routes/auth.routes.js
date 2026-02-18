@@ -18,10 +18,10 @@ router.get('/register', authController.registerPage);
 router.post('/register', redirectIfLoggedIn, authValidation.userValidation, validate, authController.register);
 
 router.get('/forgot-password', authController.forgotPasswordPage);
-// router.post('/forgot-password', redirectIfLoggedIn, isValid.forgotPasswordValidation, authController.forgotPassword);
+router.post('/forgot-password', redirectIfLoggedIn, authValidation.forgotPasswordValidation, validate, authController.forgotPassword);
 
-router.get('/reset-password', authController.resetPasswordPage);
-// router.post('/reset-password/:token', isValid.resetPasswordValidation, authController.resetPassword);
+router.get('/reset-password/:token', authController.resetPasswordPage);
+router.post('/reset-password/:token', authValidation.resetPasswordValidation, validate, authController.resetPassword);
 
 // Google Login
 // router.get('/auth/google',

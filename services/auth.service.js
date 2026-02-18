@@ -109,6 +109,59 @@ export const verifyEmailService = async (token) => {
     return user;
 };
 
+export const forgotPasswordService = async (email) => {
+    const user = await User.findOne({ email, isDeleted: false });
+
+    // Always return success message for security
+    if (!user) {
+        return;
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    user.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+    await user.save();
+
+    const resetUrl = `${process.env.APP_URL}/reset-password/${resetToken}`;
+
+    await sendEmail({
+        to: user.email,
+        subject: 'Reset your password',
+        html: resetPasswordTemplate(user.name, resetUrl)
+    });
+};
+
+export const resetPasswordService = async (token, newPassword) => {
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+    const user = await User.findOne({
+        isDeleted: false,
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        throw new Error('INVALID_OR_EXPIRED_LINK');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    return true;
+};
+
 
 const verificationEmailTemplate = (name, url) => `
     <div style="font-family: Arial, sans-serif;">
