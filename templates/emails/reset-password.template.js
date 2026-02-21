@@ -1,18 +1,37 @@
-const resetPasswordTemplate = (name, url) => `
-    <div style="font-family: Arial, sans-serif;">
-        <h2>Hello ${name},</h2>
-        <p>You requested a password reset.</p>
-        <p>Click the button below to set a new password:</p>
-        <p>
+import emailLayout from './layout.template.js';
+
+const resetPasswordTemplate = (name, url, appName) => {
+    const content = `
+        <p>Hello ${name},</p>
+
+        <p>You requested a password reset for your ${appName} account.</p>
+
+        <div style="margin:20px 0;">
             <a href="${url}"
-               style="background:#dc3545;color:#fff;
-               padding:10px 15px;text-decoration:none;border-radius:5px;">
+               style="
+                   background:#dc3545;
+                   color:#fff;
+                   padding:12px 18px;
+                   text-decoration:none;
+                   border-radius:5px;
+                   display:inline-block;
+                   font-weight:bold;
+               ">
                Reset Password
             </a>
-        </p>
-        <p>This link will expire in 15 minutes.</p>
-        <p>If you did not request this, please ignore this email.</p>
-    </div>
-`;
+        </div>
+
+        <p>This link will expire in <strong>15 minutes</strong>.</p>
+
+        <p>If you did not request this reset, you can safely ignore this email.</p>
+    `;
+
+    return emailLayout({
+        title: null,
+        content,
+        ctaUrl: url,
+        appName
+    });
+};
 
 export default resetPasswordTemplate;

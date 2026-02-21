@@ -2,6 +2,8 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { AppError } from '../utils/app-error.util.js';
+import { ERRORS } from '../config/constants/error-messages.js';
 import { sendVerificationEmail, sendResetPasswordEmail } from './email.service.js';
 
 export const loginUserService = async ({ email, password, rememberMe }) => {
@@ -9,18 +11,13 @@ export const loginUserService = async ({ email, password, rememberMe }) => {
         .findOne({ email, isDeleted: false })
         .select('+password');
 
-    if (!user) {
-        throw new Error('INVALID_CREDENTIALS');
-    }
+    if (!user) throw new AppError(ERRORS.INVALID_CREDENTIALS, 401, true);
 
-    if (!user.isEmailVerified) {
-        throw new Error('EMAIL_NOT_VERIFIED');
-    }
+    if (!user.isEmailVerified) throw new AppError(ERRORS.EMAIL_NOT_VERIFIED, 401, true);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        throw new Error('INVALID_CREDENTIALS');
-    }
+
+    if (!isMatch) throw new AppError(ERRORS.INVALID_CREDENTIALS, 401, true);
 
     const tokenExpiry = rememberMe ? '30d' : '1d';
     const jwtData = { id: user._id, role: user.role };
@@ -40,9 +37,7 @@ export const loginUserService = async ({ email, password, rememberMe }) => {
 
 export const registerUserService = async ({ name, email, phone, password, role }) => {
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        throw new Error('EMAIL_EXISTS');
-    }
+    if (existingUser) throw new AppError(ERRORS.EMAIL_EXISTS, 401, true);
 
     const allowedRoles = ['customer'];
     const finalRole = allowedRoles.includes(role) ? role : 'customer';
@@ -87,13 +82,9 @@ export const verifyEmailService = async (token) => {
         emailVerificationExpires: { $gt: Date.now() }
     });
 
-    if (!user) {
-        throw new Error('INVALID_OR_EXPIRED_TOKEN');
-    }
+    if (!user) throw new AppError(ERRORS.INVALID_TOKEN, 401, true);
 
-    if (user.isEmailVerified) {
-        throw new Error('EMAIL_ALREADY_VERIFIED');
-    }
+    if (user.isEmailVerified) throw new AppError(ERRORS.EMAIL_ALREADY_VERIFIED, 401, true);
 
     user.isEmailVerified = true;
     user.emailVerificationToken = undefined;
@@ -140,9 +131,7 @@ export const resetPasswordService = async (token, newPassword) => {
         resetPasswordExpires: { $gt: Date.now() }
     });
 
-    if (!user) {
-        throw new Error('INVALID_OR_EXPIRED_LINK');
-    }
+    if (!user) throw new AppError(ERRORS.INVALID_LINK, 401, true);
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = undefined;

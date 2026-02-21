@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import pagesRoutes from './routes/pages.routes.js';
 import { attachAuthUser } from "./middlewares/auth.middleware.js";
+import { flashErrorHandler } from './middlewares/error.middleware.js';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 // import './config/passport.js';
@@ -77,7 +78,7 @@ app.use('', (req, res, next) => {
     });
 });
 
-
+app.use(flashErrorHandler);
 // // Error Handling Middleware
 // app.use('',(err, req, res, next) => {
 //     console.log(err.stack);

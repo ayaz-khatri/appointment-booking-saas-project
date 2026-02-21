@@ -5,7 +5,6 @@ import {
     forgotPasswordService,
     resetPasswordService
 } from '../services/auth.service.js';
-import errorMessage from "../utils/error-message.util.js";
 import User from '../models/user.model.js';
 import crypto from 'crypto';
 import dotenv from "dotenv";
@@ -15,7 +14,7 @@ const loginPage = async (req, res, next) => {
     try {
         res.render('auth/login', { title: `Login - ${process.env.APP_NAME}` });
     } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
 };
 
@@ -23,7 +22,7 @@ const registerPage = async (req, res, next) => {
     try {
         res.render('auth/register', { title: `Register - ${process.env.APP_NAME}` });
     } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
 };
 
@@ -31,7 +30,7 @@ const forgotPasswordPage = async (req, res, next) => {
     try {
         res.render('auth/forgot-password', { title: `Forgot Password - ${process.env.APP_NAME}` });
     } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
 };
 
@@ -56,7 +55,7 @@ const resetPasswordPage = async (req, res, next) => {
 
         res.render('auth/reset-password', { token: req.params.token, title: 'Reset Password' });
     } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
 };
 
@@ -82,17 +81,6 @@ const login = async (req, res, next) => {
         res.redirect(redirectMap[user.role] || '/');
 
     } catch (error) {
-        if (error.message === 'INVALID_CREDENTIALS') {
-            req.flash('error', 'Invalid Email or Password.');
-            req.flash('old', req.body);
-            return res.redirect('/login');
-        }
-
-        if (error.message === 'EMAIL_NOT_VERIFIED') {
-            req.flash('error', 'Please verify your email first.');
-            return res.redirect('/login');
-        }
-
         next(error);
     }
 };
@@ -101,20 +89,9 @@ const login = async (req, res, next) => {
 const register = async (req, res, next) => {
     try {
         await registerUserService(req.body);
-
-        req.flash(
-            'success',
-            'Registration successful. Please check your email to verify your account.'
-        );
+        req.flash('success','Registration successful. Please check your email to verify your account.');
         res.redirect('/login');
-
     } catch (error) {
-        if (error.message === 'EMAIL_EXISTS') {
-            req.flash('error', 'Email already exists.');
-            req.flash('old', req.body);
-            return res.redirect('/register');
-        }
-
         next(error);
     }
 };
@@ -132,16 +109,6 @@ const verifyEmail = async (req, res, next) => {
         res.redirect('/login');
 
     } catch (error) {
-        if (error.message === 'EMAIL_ALREADY_VERIFIED') {
-            req.flash('error', 'Email already verified.');
-            return res.redirect('/login');
-        }
-
-        if (error.message === 'INVALID_OR_EXPIRED_TOKEN') {
-            req.flash('error', 'Invalid or expired token.');
-            return res.redirect('/login');
-        }
-
         next(error);
     }
 };
@@ -153,7 +120,7 @@ const forgotPassword = async (req, res, next) => {
         req.flash('success', 'If the email exists, a reset link has been sent.');
         res.redirect('/forgot-password');
     } catch (error) {
-        next(errorMessage("Something went wrong", 500));
+        next(error);
     }
 };
 
@@ -167,11 +134,6 @@ const resetPassword = async (req, res, next) => {
         res.redirect('/login');
 
     } catch (error) {
-        if (error.message === 'INVALID_OR_EXPIRED_LINK') {
-            req.flash('error', 'Invalid or expired link.');
-            req.flash('old', req.body);
-            return res.redirect('/login');
-        }
         next(error);
     }
 };
