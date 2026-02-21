@@ -21,6 +21,7 @@ export const attachAuthUser = async (req, res, next) => {
             res.locals.isLoggedIn = false;
         }
     } else {
+        res.locals.authUser = null;
         res.locals.isLoggedIn = false;
     }
 

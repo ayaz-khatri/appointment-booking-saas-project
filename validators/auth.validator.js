@@ -1,6 +1,6 @@
 import {body} from 'express-validator';
 
-const loginValidation = [
+export const loginValidation = [
     body('email')
     .trim()
     .notEmpty().withMessage('Email is required.')
@@ -12,7 +12,7 @@ const loginValidation = [
     .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.')
 ];
 
-const userValidation = [
+export const userValidation = [
      body('name')
     .trim()
     .notEmpty().withMessage('Name is required.')
@@ -49,14 +49,14 @@ const userValidation = [
     // .isIn(['customer']).withMessage('Role must be either Customer or Vendor.')
 ];
 
-const forgotPasswordValidation = [
+export const forgotPasswordValidation = [
     body('email')
     .trim()
     .notEmpty().withMessage('Email is required.')
     .isEmail().withMessage('Invalid email format.')
 ];
 
-const resetPasswordValidation = [
+export const resetPasswordValidation = [
     body('password')
     .trim()
     .notEmpty().withMessage('Password is required.')
@@ -73,10 +73,3 @@ const resetPasswordValidation = [
         return true;
     }),
 ];
-
-export default {
-    loginValidation,
-    userValidation,
-    forgotPasswordValidation,
-    resetPasswordValidation
-};

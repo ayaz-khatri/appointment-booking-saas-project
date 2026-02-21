@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import authController from '../controllers/auth.controller.js';
-import authValidation from '../validators/auth.validator.js';
+import {loginValidation, userValidation, forgotPasswordValidation, resetPasswordValidation} from '../validators/auth.validator.js';
 import validate from '../middlewares/validate.middleware.js';
 import { redirectIfLoggedIn } from "../middlewares/auth.middleware.js";
 
@@ -12,16 +12,16 @@ router.use('/', (req, res, next)=>{
 });
 
 router.get('/login', redirectIfLoggedIn, authController.loginPage);
-router.post('/login', redirectIfLoggedIn, authValidation.loginValidation, validate, authController.login);
+router.post('/login', redirectIfLoggedIn, loginValidation, validate, authController.login);
 
 router.get('/register', authController.registerPage);
-router.post('/register', redirectIfLoggedIn, authValidation.userValidation, validate, authController.register);
+router.post('/register', redirectIfLoggedIn, userValidation, validate, authController.register);
 
 router.get('/forgot-password', authController.forgotPasswordPage);
-router.post('/forgot-password', redirectIfLoggedIn, authValidation.forgotPasswordValidation, validate, authController.forgotPassword);
+router.post('/forgot-password', redirectIfLoggedIn, forgotPasswordValidation, validate, authController.forgotPassword);
 
 router.get('/reset-password/:token', authController.resetPasswordPage);
-router.post('/reset-password/:token', authValidation.resetPasswordValidation, validate, authController.resetPassword);
+router.post('/reset-password/:token', resetPasswordValidation, validate, authController.resetPassword);
 
 // Google Login
 // router.get('/auth/google',
