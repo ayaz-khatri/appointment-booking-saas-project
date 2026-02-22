@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import adminController from '../controllers/admin.controller.js';
-import { isAuthenticated, isAdmin } from "../middlewares/auth.middleware.js";
+import adminController from '../../controllers/web/admin.controller.js';
+import { isAuthenticated, isAdmin } from "../../middlewares/auth.middleware.js";
 
 router.use(isAuthenticated);
 router.use(isAdmin);

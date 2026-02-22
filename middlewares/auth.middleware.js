@@ -1,14 +1,13 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ENV } from '../config/env.config.js';
 
 export const attachAuthUser = async (req, res, next) => {
      const token = req.cookies.token;
 
     if (token) {
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, ENV.jwt.secret);
             const user = await User.findById(decoded.id);
             if(!user || user.isDeleted){
                 res.clearCookie('token'); 
@@ -59,7 +58,7 @@ export const redirectIfLoggedIn = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, ENV.jwt.secret);
 
         const redirectMap = {
             admin: "/admin",

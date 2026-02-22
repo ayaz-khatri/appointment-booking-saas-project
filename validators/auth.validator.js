@@ -1,75 +1,28 @@
-import {body} from 'express-validator';
+import {
+  emailValidator,
+  passwordValidator,
+  confirmPasswordValidator,
+  requiredString
+} from './common.validator.js';
 
 export const loginValidation = [
-    body('email')
-    .trim()
-    .notEmpty().withMessage('Email is required.')
-    .isEmail().withMessage('Invalid email format.'),
-
-    body('password')
-    .trim()
-    .notEmpty().withMessage('Password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.')
+  emailValidator(),
+  passwordValidator()
 ];
 
 export const userValidation = [
-     body('name')
-    .trim()
-    .notEmpty().withMessage('Name is required.')
-    .isLength({ min: 5, max: 50 }).withMessage('Name must be at least 5 and at most 50 characters long.'),
-
-    body('email')
-    .trim()
-    .notEmpty().withMessage('Email is required.')
-    .isEmail().withMessage('Invalid email format.'),
-
-    body('phone')
-    .trim()
-    .notEmpty().withMessage('Phone number is required.'),
-
-    body('password')
-    .trim()
-    .notEmpty().withMessage('Password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.'),
-
-    body('confirmPassword')
-    .trim()
-    .notEmpty().withMessage('Confirm password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Confirm password must be at least 8 and at most 20 characters long.')
-    .custom((value, { req }) => {
-        if (value !== req.body.password) {
-            throw new Error('Passwords do not match.');
-        }
-        return true;
-    }),
-
-    // body('role')
-    // .trim()
-    // .notEmpty().withMessage('Role is required.')
-    // .isIn(['customer']).withMessage('Role must be either Customer or Vendor.')
+  requiredString('name', 5, 50),
+  emailValidator(),
+  requiredString('phone', 5, 20),
+  passwordValidator(),
+  confirmPasswordValidator()
 ];
 
 export const forgotPasswordValidation = [
-    body('email')
-    .trim()
-    .notEmpty().withMessage('Email is required.')
-    .isEmail().withMessage('Invalid email format.')
+  emailValidator()
 ];
 
 export const resetPasswordValidation = [
-    body('password')
-    .trim()
-    .notEmpty().withMessage('Password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Password must be at least 8 and at most 20 characters long.'),
-
-    body('confirmPassword')
-    .trim()
-    .notEmpty().withMessage('Confirm password is required.')
-    .isLength({ min: 8, max: 20 }).withMessage('Confirm password must be at least 8 and at most 20 characters long.')
-    .custom((value, { req }) => {
-        if (value !== req.body.password) {
-            throw new Error('Passwords do not match.');
-        }
-        return true;
-    }),
+  passwordValidator(),
+  confirmPasswordValidator()
 ];

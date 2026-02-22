@@ -1,10 +1,9 @@
 import transporter from './mail.util.js';
-import dotenv from "dotenv";
-dotenv.config();
+import { ENV } from '../config/env.config.js';
 
 const sendEmail = async ({ to, subject, html }) => {
     await transporter.sendMail({
-        from: `"${process.env.APP_NAME}" <${process.env.MAIL_USER}>`,
+        from: `"${ENV.app.name}" <${ENV.mail.user}>`,
         to,
         subject,
         html

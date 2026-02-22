@@ -4,15 +4,15 @@ import {
     verifyEmailService,
     forgotPasswordService,
     resetPasswordService
-} from '../services/auth.service.js';
-import User from '../models/user.model.js';
+} from '../../services/auth.service.js';
+import User from '../../models/user.model.js';
 import crypto from 'crypto';
-import dotenv from "dotenv";
-dotenv.config();
+import { ENV } from '../../config/env.config.js';
+
 
 const loginPage = async (req, res, next) => {
     try {
-        res.render('auth/login', { title: `Login - ${process.env.APP_NAME}` });
+        res.render('auth/login', { title: `Login - ${ENV.app.name}` });
     } catch (error) {
         next(error);
     }
@@ -20,7 +20,7 @@ const loginPage = async (req, res, next) => {
 
 const registerPage = async (req, res, next) => {
     try {
-        res.render('auth/register', { title: `Register - ${process.env.APP_NAME}` });
+        res.render('auth/register', { title: `Register - ${ENV.app.name}` });
     } catch (error) {
         next(error);
     }
@@ -28,7 +28,7 @@ const registerPage = async (req, res, next) => {
 
 const forgotPasswordPage = async (req, res, next) => {
     try {
-        res.render('auth/forgot-password', { title: `Forgot Password - ${process.env.APP_NAME}` });
+        res.render('auth/forgot-password', { title: `Forgot Password - ${ENV.app.name}` });
     } catch (error) {
         next(error);
     }

@@ -5,16 +5,15 @@ import session from "express-session";
 import flash from "connect-flash";
 import path from 'path';
 import __dirname from './utils/dirname.util.js';
-import authRoutes from './routes/auth.routes.js';
-import adminRoutes from './routes/admin.routes.js';
-import pagesRoutes from './routes/pages.routes.js';
+import authRoutes from './routes/web/auth.routes.js';
+import adminRoutes from './routes/web/admin.routes.js';
+import pagesRoutes from './routes/web/pages.routes.js';
 import { attachAuthUser } from "./middlewares/auth.middleware.js";
-import { globalErrorHandler, pageNotFoundHandler } from './middlewares/error.middleware.js';
+import { globalErrorHandler, pageNotFoundHandler } from './middlewares/error-handler.middleware.js';
 import passport from 'passport';
 // import './config/passport.js';
-import connectDB from './config/db.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ENV } from './config/env.config.js';
+import connectDB from './config/db.config.js';
 
 /* ------------------------- Initialize Express App ------------------------- */
 const app = express();
@@ -34,7 +33,7 @@ connectDB();
 
 /* ---------------------------- Session Settings ---------------------------- */
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: ENV.session.secret,
     resave: false,
     saveUninitialized: false
 }));
@@ -64,7 +63,7 @@ app.use(pageNotFoundHandler);
 app.use(globalErrorHandler);
 
 /* ---------------------------- Start the server ---------------------------- */
-const port = process.env.PORT || 3000;
+const port = ENV.app.port;
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

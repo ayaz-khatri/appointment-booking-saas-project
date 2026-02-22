@@ -1,8 +1,7 @@
 import cloudinary from '../config/cloudinary.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ENV } from '../config/env.config.js';
 
-const PROJECT_FOLDER = process.env.APP_NAME?.replace(/\s+/g, '-').toLowerCase() || 'default-project';
+const PROJECT_FOLDER = ENV.app.name?.replace(/\s+/g, '-').toLowerCase() || 'default-project';
 
 export const uploadImage = async (file, folder = 'uploads') => {
     if (!file) return null;

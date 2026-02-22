@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
-import authController from '../controllers/auth.controller.js';
-import {loginValidation, userValidation, forgotPasswordValidation, resetPasswordValidation} from '../validators/auth.validator.js';
-import validate from '../middlewares/validate.middleware.js';
-import { redirectIfLoggedIn } from "../middlewares/auth.middleware.js";
+import authController from '../../controllers/web/auth.controller.js';
+import {loginValidation, userValidation, forgotPasswordValidation, resetPasswordValidation} from '../../validators/auth.validator.js';
+import validate from '../../middlewares/validate.middleware.js';
+import { redirectIfLoggedIn } from "../../middlewares/auth.middleware.js";
 
 
 router.use('/', (req, res, next)=>{
