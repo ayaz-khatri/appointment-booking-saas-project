@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import expressLayouts from 'express-ejs-layouts';
 import cookieParser from 'cookie-parser';
 import session from "express-session";
@@ -10,10 +9,10 @@ import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import pagesRoutes from './routes/pages.routes.js';
 import { attachAuthUser } from "./middlewares/auth.middleware.js";
-import { flashErrorHandler } from './middlewares/error.middleware.js';
-import bodyParser from 'body-parser';
+import { globalErrorHandler, pageNotFoundHandler } from './middlewares/error.middleware.js';
 import passport from 'passport';
 // import './config/passport.js';
+import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -31,17 +30,16 @@ app.set('view engine', 'ejs');
 app.use(attachAuthUser);
 
 /* --------------------------- Database Connection -------------------------- */
-mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log("Database Connected."))
-.catch(err => console.log(err));
+connectDB();
 
-/* ------------------------------ connect-flash ----------------------------- */
+/* ---------------------------- Session Settings ---------------------------- */
 app.use(session({
-    secret: process.env.JWT_SECRET,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
 
+/* ------------------------------ connect-flash ----------------------------- */
 app.use(flash());
 
 // Make flash available in all views
@@ -57,38 +55,13 @@ app.use((req, res, next) => {
 // app.use(passport.session());
 
 /* --------------------------------- Routes --------------------------------- */
-
-
-app.use('/admin', (req, res, next)=>{
-  res.locals.layout = 'layouts/admin.layout.ejs';
-  next();
-});
-
 app.use('/', pagesRoutes);
 app.use('/admin', adminRoutes);
-// app.use('/profile', profileRoutes);
-
-
 app.use(authRoutes);
 
-app.use('', (req, res, next) => {
-    res.status(404).render('errors/404',{
-        title: '404 - Page Not Found',
-        message: 'Page Not Found'
-    });
-});
-
-app.use(flashErrorHandler);
-// // Error Handling Middleware
-// app.use('',(err, req, res, next) => {
-//     console.log(err.stack);
-//     const status = err.status || 500;
-//     res.status(status).render('common/error',{
-//         status: status,
-//         message: err.message || 'Something went wrong!',
-//         role: req.role
-//     });
-// });
+/* ----------------------- Error Handling Middlewares ----------------------- */
+app.use(pageNotFoundHandler);
+app.use(globalErrorHandler);
 
 /* ---------------------------- Start the server ---------------------------- */
 const port = process.env.PORT || 3000;
